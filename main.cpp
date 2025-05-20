@@ -1,4 +1,5 @@
 #include "raylib.h"
+#include "raymath.h"
 
 int main()
 {
@@ -13,6 +14,7 @@ int main()
     float scale = 4.0f;
     float rotation = 0.0f;
     Color tint = WHITE;
+    float speed = 4.0f; // Movement speed
 
     SetTargetFPS(60);
 
@@ -20,6 +22,18 @@ int main()
     {
         BeginDrawing();
         ClearBackground(RAYWHITE);
+
+        Vector2 direction{};
+        if (IsKeyDown(KEY_A)) direction.x -= 1.0f;
+        if (IsKeyDown(KEY_D)) direction.x += 1.0f;
+        if (IsKeyDown(KEY_W)) direction.y -= 1.0f;
+        if (IsKeyDown(KEY_S)) direction.y += 1.0f;
+        if (Vector2Length(direction) != 0.0f)
+        {
+            direction = Vector2Normalize(direction);
+            direction = Vector2Scale(direction, speed); // Scale movement by speed
+            mapPosition = Vector2Subtract(mapPosition, direction);
+        }
 
         DrawTextureEx(map, mapPosition, rotation, scale, tint);
 
