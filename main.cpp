@@ -1,6 +1,15 @@
 #include "raylib.h"
 #include "raymath.h"
 
+// Character class definition
+class Character {
+public:
+    // Public members and methods will go here
+
+private:
+    // Private members and methods will go here
+};
+
 int main()
 {
     const int windowWidth = 384;
@@ -24,6 +33,7 @@ int main()
         (float)windowWidth/2.0f - 4.0f * (0.5f * (float)knight.width/6.0f),
         (float)windowHeight/2.0f - 4.0f * (0.5f * (float)knight.height)
     };
+    
 // 1 : facing right, -1 : facing left
 float rightLeft{1.f}; // Direction for character facing
 
