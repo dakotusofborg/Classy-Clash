@@ -13,8 +13,8 @@ private:
     Texture2D texture{LoadTexture("characters/knight_idle_spritesheet.png")};
     Texture2D idle{LoadTexture("characters/knight_idle_spritesheet.png")};
     Texture2D run{LoadTexture("characters/knight_run_spritesheet.png")};
-    Vector2 screenPos;
-    Vector2 worldPos;
+    Vector2 screenPos{};
+    Vector2 worldPos{};
     // 1 : facing right, -1 : facing left
     float rightLeft{1.f}; // Direction for character facing
 
@@ -67,13 +67,17 @@ void Character::tick(float deltaTime)
         if (frame > maxFrames)
             frame = 0; // lop back to first frame
     }
+
+    // draw the character
+    Rectangle source{frame * (float)texture.width / 6.f, 0.f, rightLeft * (float)texture.width / 6.f, (float)texture.height};
+    Rectangle dest{screenPos.x, screenPos.y, 4.0f * (float)texture.width / 6.0f, 4.0f * (float)texture.height};
+    DrawTexturePro(texture, source, dest, Vector2{}, 0.f, WHITE);
 }
 
 int main()
 {
     const int windowWidth = 384;
     const int windowHeight = 384;
-
     InitWindow(windowWidth, windowHeight, "Classy Clash");
 
     Texture2D map = LoadTexture("nature_tileset/OpenWorldMap24x24.png");
@@ -82,73 +86,24 @@ int main()
     float scale = 4.0f;
     float rotation = 0.0f;
     Color tint = WHITE;
-    float speed = 4.0f; // Movement speed
 
-    Texture2D knight_idle = LoadTexture("characters/knight_idle_spritesheet.png");
-    Texture2D knight_run = LoadTexture("characters/knight_run_spritesheet.png");
-    Texture2D knight = knight_idle; // Default to idle
-
-    Vector2 knightPosition = {
-        (float)windowWidth / 2.0f - 4.0f * (0.5f * (float)knight.width / 6.0f),
-        (float)windowHeight / 2.0f - 4.0f * (0.5f * (float)knight.height)};
-
-    // 1 : facing right, -1 : facing left
-    float rightLeft{1.f}; // Direction for character facing
-
-    // anim variables
-    float runningTime{};
-    int frame{};
-    const int maxFrames{6};               // Total frames in the knight sprite sheet
-    const float updateTime{1.0f / 12.0f}; // Time per frame for animation
+    // create an instance of the character class and set its screen position
+    Character knight;
+    knight.setScreenPos(windowWidth, windowHeight);
 
     SetTargetFPS(60);
-
     while (!WindowShouldClose())
     {
         BeginDrawing();
         ClearBackground(RAYWHITE);
 
-        Vector2 direction{};
-        if (IsKeyDown(KEY_A))
-            direction.x -= 1.0f;
-        if (IsKeyDown(KEY_D))
-            direction.x += 1.0f;
-        if (IsKeyDown(KEY_W))
-            direction.y -= 1.0f;
-        if (IsKeyDown(KEY_S))
-            direction.y += 1.0f;
-
-        // Set knight texture based on movement
-        if (Vector2Length(direction) == 0.0f)
-        {
-            knight = knight_idle;
-        }
-        else
-        {
-            knight = knight_run;
-            direction = Vector2Normalize(direction);
-            direction = Vector2Scale(direction, speed); // Scale movement by speed
-            mapPosition = Vector2Subtract(mapPosition, direction);
-            direction.x < 0.f ? rightLeft = -1.f : rightLeft = 1.f; // Update facing direction
-        }
+        mapPosition = Vector2Scale(knight.getWorldPos(), -1.f);
 
         // draw the map
         DrawTextureEx(map, mapPosition, rotation, scale, tint);
 
-        // update animation frame
-        runningTime += GetFrameTime();
-        if (runningTime >= updateTime)
-        {
-            runningTime = 0.0f;
-            frame++;
-            if (frame > maxFrames)
-                frame = 0; // Loop back to the first frame
-        };
-
-        // draw the character
-        Rectangle source{frame * (float)knight.width / 6.f, 0.f, rightLeft * (float)knight.width / 6.f, (float)knight.height};
-        Rectangle dest{knightPosition.x, knightPosition.y, 4.0f * (float)knight.width / 6.0f, 4.0f * (float)knight.height};
-        DrawTexturePro(knight, source, dest, Vector2{}, 0.f, WHITE);
+        // update and draw the character
+        knight.tick(GetFrameTime());
 
         EndDrawing();
     }
