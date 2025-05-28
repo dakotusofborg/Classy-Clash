@@ -14,8 +14,7 @@ int main()
     const float mapScale{4.0f};
 
     // create an instance of the character class and set its screen position
-    Character knight;
-    knight.setScreenPos(windowWidth, windowHeight);
+    Character knight(windowWidth, windowHeight);
 
     SetTargetFPS(60);
     while (!WindowShouldClose())
