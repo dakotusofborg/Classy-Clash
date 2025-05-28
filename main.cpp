@@ -2,25 +2,72 @@
 #include "raymath.h"
 
 // Character class definition
-class Character {
+class Character
+{
 public:
     Vector2 getWorldPos() const { return worldPos; }
+    void setScreenPos(int winWidth, int winHeight);
+    void tick(float deltaTime);
 
 private:
-    Texture2D texture;
-    Texture2D idle; 
-    Texture2D run;
+    Texture2D texture{LoadTexture("characters/knight_idle_spritesheet.png")};
+    Texture2D idle{LoadTexture("characters/knight_idle_spritesheet.png")};
+    Texture2D run{LoadTexture("characters/knight_run_spritesheet.png")};
     Vector2 screenPos;
     Vector2 worldPos;
     // 1 : facing right, -1 : facing left
     float rightLeft{1.f}; // Direction for character facing
 
-    // anim variables 
+    // anim variables
     float runningTime{};
     int frame{};
-    const int maxFrames{6}; // Total frames in the knight sprite sheet
-    const float updateTime{1.0f/12.0f}; // Time per frame for animation
+    const int maxFrames{6};               // Total frames in the knight sprite sheet
+    const float updateTime{1.0f / 12.0f}; // Time per frame for animation
+    const float speed{4.0f};              // Movement speed
 };
+
+void Character::setScreenPos(int winWidth, int winHeight)
+{
+    screenPos = {
+        (float)winWidth / 2.0f - 4.0f * (0.5f * (float)texture.width / 6.0f),
+        (float)winHeight / 2.0f - 4.0f * (0.5f * (float)texture.height)};
+}
+
+void Character::tick(float deltaTime)
+{
+    Vector2 direction{};
+    if (IsKeyDown(KEY_A))
+        direction.x -= 1.0f;
+    if (IsKeyDown(KEY_D))
+        direction.x += 1.0f;
+    if (IsKeyDown(KEY_W))
+        direction.y -= 1.0f;
+    if (IsKeyDown(KEY_S))
+        direction.y += 1.0f;
+
+    // Set knight texture based on movement
+    if (Vector2Length(direction) != 0.0f)
+    {
+        // set worldPos = worldPos + direction
+        worldPos = Vector2Add(worldPos, Vector2Scale(Vector2Normalize(direction), speed));
+        direction.x < 0.f ? rightLeft = -1.f : rightLeft = 1.f; // Update facing direction
+        texture = run;                                          // Use running texture
+    }
+    else
+    {
+        texture = idle; // Use idle texture
+    }
+
+    // Update animation frame
+    runningTime += deltaTime;
+    if (runningTime >= updateTime)
+    {
+        runningTime = 0.0f;
+        frame++;
+        if (frame > maxFrames)
+            frame = 0; // lop back to first frame
+    }
+}
 
 int main()
 {
@@ -31,7 +78,7 @@ int main()
 
     Texture2D map = LoadTexture("nature_tileset/OpenWorldMap24x24.png");
 
-    Vector2 mapPosition = { 0.0f, 0.0f };
+    Vector2 mapPosition = {0.0f, 0.0f};
     float scale = 4.0f;
     float rotation = 0.0f;
     Color tint = WHITE;
@@ -42,20 +89,19 @@ int main()
     Texture2D knight = knight_idle; // Default to idle
 
     Vector2 knightPosition = {
-        (float)windowWidth/2.0f - 4.0f * (0.5f * (float)knight.width/6.0f),
-        (float)windowHeight/2.0f - 4.0f * (0.5f * (float)knight.height)
- };
-    
-// 1 : facing right, -1 : facing left
-float rightLeft{1.f}; // Direction for character facing
+        (float)windowWidth / 2.0f - 4.0f * (0.5f * (float)knight.width / 6.0f),
+        (float)windowHeight / 2.0f - 4.0f * (0.5f * (float)knight.height)};
 
-// anim variables 
-float runningTime{};
-int frame{};
-const int maxFrames{6}; // Total frames in the knight sprite sheet
-const float updateTime{1.0f/12.0f}; // Time per frame for animation
-    
-SetTargetFPS(60);
+    // 1 : facing right, -1 : facing left
+    float rightLeft{1.f}; // Direction for character facing
+
+    // anim variables
+    float runningTime{};
+    int frame{};
+    const int maxFrames{6};               // Total frames in the knight sprite sheet
+    const float updateTime{1.0f / 12.0f}; // Time per frame for animation
+
+    SetTargetFPS(60);
 
     while (!WindowShouldClose())
     {
@@ -63,10 +109,14 @@ SetTargetFPS(60);
         ClearBackground(RAYWHITE);
 
         Vector2 direction{};
-        if (IsKeyDown(KEY_A)) direction.x -= 1.0f;
-        if (IsKeyDown(KEY_D)) direction.x += 1.0f;
-        if (IsKeyDown(KEY_W)) direction.y -= 1.0f;
-        if (IsKeyDown(KEY_S)) direction.y += 1.0f;
+        if (IsKeyDown(KEY_A))
+            direction.x -= 1.0f;
+        if (IsKeyDown(KEY_D))
+            direction.x += 1.0f;
+        if (IsKeyDown(KEY_W))
+            direction.y -= 1.0f;
+        if (IsKeyDown(KEY_S))
+            direction.y += 1.0f;
 
         // Set knight texture based on movement
         if (Vector2Length(direction) == 0.0f)
@@ -91,14 +141,14 @@ SetTargetFPS(60);
         {
             runningTime = 0.0f;
             frame++;
-            if (frame > maxFrames) frame = 0; // Loop back to the first frame
+            if (frame > maxFrames)
+                frame = 0; // Loop back to the first frame
         };
 
         // draw the character
-        Rectangle source{frame * (float)knight.width/6.f, 0.f, rightLeft * (float)knight.width/6.f, (float)knight.height};
-        Rectangle dest{knightPosition.x, knightPosition.y, 4.0f * (float)knight.width/6.0f, 4.0f * (float)knight.height};
+        Rectangle source{frame * (float)knight.width / 6.f, 0.f, rightLeft * (float)knight.width / 6.f, (float)knight.height};
+        Rectangle dest{knightPosition.x, knightPosition.y, 4.0f * (float)knight.width / 6.0f, 4.0f * (float)knight.height};
         DrawTexturePro(knight, source, dest, Vector2{}, 0.f, WHITE);
-
 
         EndDrawing();
     }
