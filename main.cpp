@@ -4,10 +4,22 @@
 // Character class definition
 class Character {
 public:
-    // Public members and methods will go here
+    Vector2 getWorldPos() const { return worldPos; }
 
 private:
-    // Private members and methods will go here
+    Texture2D texture;
+    Texture2D idle; 
+    Texture2D run;
+    Vector2 screenPos;
+    Vector2 worldPos;
+    // 1 : facing right, -1 : facing left
+    float rightLeft{1.f}; // Direction for character facing
+
+    // anim variables 
+    float runningTime{};
+    int frame{};
+    const int maxFrames{6}; // Total frames in the knight sprite sheet
+    const float updateTime{1.0f/12.0f}; // Time per frame for animation
 };
 
 int main()
@@ -32,7 +44,7 @@ int main()
     Vector2 knightPosition = {
         (float)windowWidth/2.0f - 4.0f * (0.5f * (float)knight.width/6.0f),
         (float)windowHeight/2.0f - 4.0f * (0.5f * (float)knight.height)
-    };
+ };
     
 // 1 : facing right, -1 : facing left
 float rightLeft{1.f}; // Direction for character facing
