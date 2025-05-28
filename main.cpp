@@ -1,6 +1,7 @@
 #include "raylib.h"
 #include "raymath.h"
 #include "character.h"
+#include "Prop.h"
 
 int main()
 {
@@ -16,6 +17,8 @@ int main()
     // create an instance of the character class and set its screen position
     Character knight(windowWidth, windowHeight);
 
+    Prop rock{Vector2{0.f, 0.f}, LoadTexture("nature_tileset/Rock.png")};
+
     SetTargetFPS(60);
     while (!WindowShouldClose())
     {
@@ -26,6 +29,8 @@ int main()
 
         // draw the map
         DrawTextureEx(map, mapPosition, 0.f, mapScale, WHITE);
+
+        rock.Render(knight.getWorldPos());
 
         // update and draw the character
         knight.tick(GetFrameTime());
