@@ -8,6 +8,7 @@ class BaseCharacter
 public:
     BaseCharacter();
     Vector2 getWorldPos() { return worldPos; }
+    virtual void tick(float deltaTime);
     void undoMovement(); // for future use, e.g., when the character goes out of bounds
     Rectangle getCollisionRec();
 protected: 
