@@ -17,7 +17,10 @@ int main()
     // create an instance of the character class and set its screen position
     Character knight(windowWidth, windowHeight);
 
-    Prop rock{Vector2{0.f, 0.f}, LoadTexture("nature_tileset/Rock.png")};
+    Prop props[2] = {
+        Prop{Vector2{600.f, 300.f}, LoadTexture("nature_tileset/Rock.png")},
+        Prop{Vector2{400.f, 500.f}, LoadTexture("nature_tileset/Log.png")},
+    };
 
     SetTargetFPS(60);
     while (!WindowShouldClose())
@@ -30,7 +33,12 @@ int main()
         // draw the map
         DrawTextureEx(map, mapPosition, 0.f, mapScale, WHITE);
 
-        rock.Render(knight.getWorldPos());
+        // draw the props
+        for (auto prop : props)
+        {
+            // render each prop relative to the knight's position
+            prop.Render(knight.getWorldPos());
+        }
 
         // update and draw the character
         knight.tick(GetFrameTime());
@@ -41,6 +49,15 @@ int main()
             knight.getWorldPos().y + windowHeight > map.height * mapScale)
         {
             knight.undoMovement(); // undo the last movement if out of bounds
+        }
+
+        // check for collisions with props
+        for (auto prop : props)
+        {
+            if (CheckCollisionRecs(prop.getCollisionRec(knight.getWorldPos()), knight.getCollisionRec()))
+            {
+                knight.undoMovement(); // undo the last movement if colliding with a prop
+            }
         }
 
         EndDrawing();

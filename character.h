@@ -7,7 +7,8 @@ public:
     Vector2 getWorldPos() { return worldPos; }
     void tick(float deltaTime);
     void undoMovement(); // for future use, e.g., when the character goes out of bounds
-
+    Rectangle getCollisionRec();
+    
 private:
     Texture2D texture{LoadTexture("characters/knight_idle_spritesheet.png")};
     Texture2D idle{LoadTexture("characters/knight_idle_spritesheet.png")};
