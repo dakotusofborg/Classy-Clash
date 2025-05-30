@@ -29,7 +29,7 @@ int main()
         LoadTexture("characters/goblin_idle_spritesheet.png"),
         LoadTexture("characters/goblin_run_spritesheet.png")
     );
-    goblin.setTarget(&knight); // set the target for the goblin
+    goblin.setTarget(&knight); // set the target for the ssgoblin
 
     SetTargetFPS(60);
     while (!WindowShouldClose())
