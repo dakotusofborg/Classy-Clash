@@ -72,6 +72,15 @@ int main()
         // Call tick() for goblin after checking collisions
         goblin.tick(GetFrameTime());
 
+        // attack/collsion logic 
+        if (IsMouseButtonPressed)(MOUSE_LEFT_BUTTON);
+        {
+            if (CheckCollisionRecs(goblin.getCollisionRec(), knight.getWeaponCollisionRec()))
+            {
+                goblin.setAlive(false);
+            }
+        }
+
         EndDrawing();
     
     }

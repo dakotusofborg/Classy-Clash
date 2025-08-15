@@ -12,6 +12,8 @@ public:
     void undoMovement(); // for future use, e.g., when the character goes out of bounds
     Rectangle getCollisionRec();
     virtual Vector2 getScreenPos() = 0; // pure virtual function to get screen position
+    bool getAlive() { return alive; }
+    void setAlive(bool isAlive) { alive = isAlive; }
 protected: 
     Texture2D texture{LoadTexture("characters/knight_idle_spritesheet.png")};
     Texture2D idle{LoadTexture("characters/knight_idle_spritesheet.png")};
@@ -31,6 +33,7 @@ protected:
     float scale{4.f};
     Vector2 velocity{};
 private:
+    bool alive{true};
 };
 
 #endif // BASE_CHARACTER_H
