@@ -48,7 +48,7 @@ make
 
 ## 🛠️ Controls
 - **WASD / Arrow keys** → Move character  
-- **Space / Enter** → Attack  
+- **Left CLick** → Attack  
 - **Esc** → Quit game  
 
 ---
